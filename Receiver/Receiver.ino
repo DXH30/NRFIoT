@@ -15,7 +15,7 @@ Thx!
 #include "RF24.h"
 #include "SPI.h"
 
-int ReceivedMessage[1] = {000}; // Used to store value received by the NRF24L01
+int ReceivedMessage[12];
 
 RF24 radio(9,10); // NRF24L01 used SPI pins + Pin 9 and 10 on the UNO
 
@@ -28,24 +28,20 @@ radio.begin(); // Start the NRF24L01
 radio.openReadingPipe(1,pipe); // Get NRF24L01 ready to receive
 
 radio.startListening(); // Listen to see if information received
-Serial.begin(9600);
+Serial.begin(38400);
 Serial.println("Beginning Received");
 }
 
 void loop(void){
-
-while (radio.available())
-{
-radio.read(ReceivedMessage, 1); // Read information from the NRF24L01
-
-if (ReceivedMessage[0] == 111) // Indicates switch is pressed
-{
-  Serial.println("Switch is pressed");
-}
-else
-{
-  Serial.println("Switch is turned off");
-}
-delay(10);
-}
-}
+  while (radio.available())
+    {
+      //Serial.println("Radio is available");
+      //Serial.println("Waiting for message..");
+      radio.read(ReceivedMessage, 12); // Read information from the NRF24L01
+      for (int i = 0; i <= 11; i++) {
+        Serial.print(ReceivedMessage[i]); Serial.print(",");
+      }
+      Serial.println();
+      //Serial.println("success");
+    }
+  }

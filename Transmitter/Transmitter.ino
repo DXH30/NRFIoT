@@ -43,33 +43,41 @@ void setup(void) {
   radio.openWritingPipe(pipe);
   Serial.println("Initializing I2C devices...");
   accelgyro.initialize();
-  Serial.begin(38400);
+  Serial.begin(9600);
   Serial.println(accelgyro.testConnection() ? "MPU6050 connection successful" : "MPU6050 connection failed");
 }
 int a = 0;
 
 void loop() {
-  /*
     digitalWrite(TRIG_PIN, LOW);
     delayMicroseconds(2);
     digitalWrite(TRIG_PIN, HIGH);
     delayMicroseconds(10);
     digitalWrite(TRIG_PIN, LOW);
-  */
-  accelgyro.getMotion6(&ax, &ay, &az, &gx, &gy, &gz);
+    const unsigned long duration = pulseIn(ECHO_PIN, HIGH);
+    int distance = duration/29/2; // dalam cm
+    accelgyro.getMotion6(&ax, &ay, &az, &gx, &gy, &gz);
 
- // const unsigned long duration = pulseIn(ECHO_PIN, HIGH);
-//  int distance = duration / 29 / 2;
-  #ifdef OUTPUT_READABLE_ACCELGYRO
+    if(duration==0){
+     Serial.println("Warning: no pulse from sensor");
+    }
+    
+    #ifdef OUTPUT_READABLE_ACCELGYRO
     // display tab-separated accel/gyro x/y/z values
-    Serial.print("a/g:\t");
-    Serial.print(ax); Serial.print("\t");
-    Serial.print(ay); Serial.print("\t");
-    Serial.print(az); Serial.print("\t");
-    Serial.print(gx); Serial.print("\t");
-    Serial.print(gy); Serial.print("\t");
-    Serial.print(gz); Serial.print("\n");
+    Serial.print("");
+//    Serial.print(ax); Serial.print(",");
+//    Serial.print(ay); Serial.print(",");
+//    Serial.print(az); Serial.print(",");
+//    Serial.print(gx); Serial.print(",");
+//    Serial.print(gy); Serial.print(",");
+//    Serial.print(gz); Serial.print(",");
+    if(distance < 1000) {
+      Serial.print(distance); Serial.print("\n");
+    }
+    int transmitData[] = {ax, ay, az, gx, gy, gz, distance};
+    radio.write(transmitData, sizeof(transmitData));
 //    Serial.println(distance);
+    //Serial.println(sizeof(transmitData));
   #endif
 
   #ifdef OUTPUT_BINARY_ACCELGYRO
