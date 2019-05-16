@@ -28,7 +28,7 @@ radio.begin(); // Start the NRF24L01
 radio.openReadingPipe(1,pipe); // Get NRF24L01 ready to receive
 
 radio.startListening(); // Listen to see if information received
-Serial.begin(38400);
+Serial.begin(9600);
 Serial.println("Beginning Received");
 }
 
@@ -37,8 +37,8 @@ void loop(void){
     {
       //Serial.println("Radio is available");
       //Serial.println("Waiting for message..");
-      radio.read(ReceivedMessage, 12); // Read information from the NRF24L01
-      for (int i = 0; i <= 11; i++) {
+      radio.read(ReceivedMessage, 14); // Read information from the NRF24L01
+      for (int i = 0; i <= 6; i++) {
         Serial.print(ReceivedMessage[i]); Serial.print(",");
       }
       Serial.println();
